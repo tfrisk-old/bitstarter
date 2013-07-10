@@ -53,18 +53,14 @@ var checkUrl = function(urlstr, checksfile) {
 	    this.retry(5000); // try again after 5 sec
 	} else {
 	    //process checks
-	    //console.log('checkUrl results: ' + result);
 	    $ = cheerio.load(result);
-	    console.log('checkUrl $: ' + $);
 	    var checks = loadChecks(checksfile).sort();
-	    console.log('checkUrl checks: ' + checks);
 	    var out = {};
 	    for (var ii in checks) {
 		var present = $(checks[ii]).length > 0;
 		out[checks[ii]] = present;
 	    }
-	    console.log('checkUrl out' + out);
-	    return out;
+	    console.log(JSON.stringify(out, null, 4));
 	}
     });
 };
@@ -77,7 +73,7 @@ var checkHtmlFile = function(htmlfile, checksfile) {
 	var present = $(checks[ii]).length > 0;
 	out[checks[ii]] = present;
     }
-    return out;
+    console.log(JSON.stringify(out, null, 4));
 };
 
 var clone = function(fn) {
@@ -93,17 +89,10 @@ if(require.main == module) {
     .option('-u, --url <url>', 'External url to be checked')
     .parse(process.argv);
     if(program.url) {
-        console.log('program.url: ' + program.url);
-        //var tmpdata = loadUrl(program.url);
-        //console.log('tmpdata: ' + tmpdata);
-        //var tmpfile = fs.writeFile('tmpfile',tmpdata);
-        //var checkJson = checkHtmlFile('tmpfile', program.checks);
         var checkJson = checkUrl(program.url, program.checks);
     } else {
         var checkJson = checkHtmlFile(program.file, program.checks);
     }
-    var outJson = JSON.stringify(checkJson, null, 4);
-    console.log('outJson: ' + outJson);
 } else {
     exports.checkHtmlFile = checkHtmlFile;
     exports.checkUrl = checkUr;
